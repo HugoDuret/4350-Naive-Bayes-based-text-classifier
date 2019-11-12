@@ -30,12 +30,20 @@ public:
 
 class Word_frequency {
     string word;
-    double frequency;
+    float frequency;
 
 public:
-    Word_frequency(string w, double freq) : word(w), frequency(freq) {}
+    Word_frequency(string w, float freq) : word(w), frequency(freq) {}
+    Word_frequency() : word(""), frequency(0) {}
+    Word_frequency & operator=(Word_frequency & other) {
+        if (this != &other) { // self-assignment check expected
+                frequency = other.get_frequency();
+                word = other.get_word();
+            }
+            return *this;
+    }
     string get_word() {return word;}
-    double get_frequency() {return frequency;}
+    float get_frequency() {return frequency;}
 
 };
 

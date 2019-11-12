@@ -20,7 +20,10 @@ Word_count max_word_in_remaining(vector<Word_count> find_in, vector<vector<Word_
 //m (number of categories)
 //n (number of most frequent words)
 //k (number of text files under each categories)
-void training(unsigned int m, unsigned int n, unsigned int k) {
+void training(const unsigned int training_configuration[]) {
+    const unsigned int m = training_configuration[0];
+    const unsigned int n = training_configuration[1];
+    const unsigned int k = training_configuration[2];
     // to compute the most frequent words and their frequencies, we have to
     // count the times the words appear, both in total and also per category
     // then deduce the frequencies, in total and also per category
@@ -56,7 +59,7 @@ void training(unsigned int m, unsigned int n, unsigned int k) {
     vector < vector <string> > path_to_texts_per_category;
     path_to_texts_per_category.resize(m);
     for (unsigned int i = 0; i < m ; i++) {
-        most_frequent_words_per_category[i].resize(k);
+        path_to_texts_per_category[i].resize(k);
     }
 
     // read the folder mini_newsgroups to get the m categories
@@ -73,61 +76,27 @@ void training(unsigned int m, unsigned int n, unsigned int k) {
         string path_to_category = "../../mini_newsgroups/"; // to be completed just below
         path_to_category.append(ent->d_name);
         category_names.push_back(ent->d_name);
-        printf("debug: m=%d, category_counter =%d %s\n", m, category_counter, path_to_category.c_str());
 
-        /* print all the files and directories within directory mini_newsgroups/-current_category- */
-        printf("so far so goo1d");
+        // print all the files and directories within directory mini_newsgroups\-current_category-
         if ((dir2 = opendir ( path_to_category.c_str() ) ) != nullptr) {
-            printf("so far so good");
             while ( ( (ent2 = readdir (dir2)) != nullptr ) and (text_counter < k) ) {
                 string path_to_text = path_to_category + "/";
                 path_to_text.append(ent2->d_name);
                 path_to_texts_per_category[category_counter][text_counter] = path_to_text;
-                printf("debug2 : k=%d, text_counter =%d %s\n", k, text_counter, path_to_text.c_str());
                 text_counter++;
             }
             closedir (dir2);
         } else {
             /* could not open directory */
-            printf("error1: could not open directory %s", path_to_category.c_str());
+            cout << "error1: could not open directory " << path_to_category.c_str();
         }
         category_counter++;
       }
       closedir (dir);
     } else {
       /* could not open directory */
-      printf("error2: could not open directory mini_newsgroups");
+      cout << "error2: could not open directory mini_newsgroups";
     }
-
-    // DEBUG BEGIN
-    for(unsigned int i = 0; i < m; i++) {
-        for(unsigned int j = 0; j < k; j++) {
-            printf("all path: %d, %d = %s\n", i, j, path_to_texts_per_category[i][j].c_str());
-        }
-    }
-
-
-    // for each category
-    for(unsigned int i = 0; i < m; i++) {
-        // for each file in each category
-        for(unsigned int j = 0; j < k; j++) {
-            // we read a word
-            string line;
-            ifstream file (path_to_texts_per_category[i][j].c_str());
-            if (file.is_open()) {
-              while ( getline (file,line) )
-              {
-                printf("%s \n", line.c_str());
-              }
-              file.close();
-            } else {
-                printf("error3:Unable to open file");
-            }
-
-        }
-    }
-    // DEBUG END
-
 
     // for each category
     for(unsigned int cat = 0; cat < m; cat++) {
@@ -173,10 +142,10 @@ void training(unsigned int m, unsigned int n, unsigned int k) {
             // find word with max counter in count_words_per_category[cat]
             // and such as word is not already in most_frequent_words_per_category[cat]
             Word_count word = max_word_in_cat(count_words_per_category[cat], most_frequent_words_per_category[cat]);
-            most_frequent_words_per_category[cat].push_back(word);
+            most_frequent_words_per_category[cat][nb_words_in_cat] = word;
             // create a new object Word_frequency with the word itself, and the frequency of this word in its category
-            Word_frequency freq_word = Word_frequency(word.get_word(), word.get_counter() / nb_words_in_category[cat]);
-            frequencies_most_frequent_words_per_category[cat].push_back(freq_word);
+            Word_frequency freq_word = Word_frequency(word.get_word(), float(word.get_counter()) / float(nb_words_in_category[cat]) );
+            frequencies_most_frequent_words_per_category[cat][nb_words_in_cat] = freq_word;
         }
     }
 
@@ -188,10 +157,10 @@ void training(unsigned int m, unsigned int n, unsigned int k) {
         // find the word with max_count not in most_frequent_words_per_category[cat] for all cat
         // and not in most_frequent_words_all_categories
         Word_count word = max_word_in_remaining(count_words_in_all_categories, most_frequent_words_per_category, most_frequent_words_in_all_categories);
-        most_frequent_words_in_all_categories.push_back(word);
+        most_frequent_words_in_all_categories[nb_words] = word;
         // create a new object Word_frequency with the word itself, and the frequency of this word in its category
-        Word_frequency freq_word = Word_frequency( word.get_word(), word.get_counter() / total_nb_words );
-        frequencies_most_frequent_words_in_all_categories.push_back(freq_word);
+        Word_frequency freq_word = Word_frequency( word.get_word(), float(word.get_counter()) / float(total_nb_words) );
+        frequencies_most_frequent_words_in_all_categories[nb_words] = freq_word;
     }
 
     // print results
@@ -207,7 +176,7 @@ void training(unsigned int m, unsigned int n, unsigned int k) {
     }
 
     printf(" Most frequent words among the remaining words in all categories\n ");
-    for(unsigned int i = 0; i < m; i++) {
+    for(unsigned int i = 0; i < n; i++) {
         // print the current word, with its frequency
         Word_frequency current = frequencies_most_frequent_words_in_all_categories[i];
         printf("%s: %f\n", current.get_word().c_str(), current.get_frequency());
