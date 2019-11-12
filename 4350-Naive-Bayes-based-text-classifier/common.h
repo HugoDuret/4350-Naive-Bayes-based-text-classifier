@@ -10,9 +10,17 @@ class Word_count {
 
 public:
     Word_count(string w) : word(w), counter(1) {}
+    Word_count(string w, int c) : word(w), counter(c) {}
     Word_count() : word(""), counter(1) {}
     void operator++() {
         counter = counter + 1;
+    }
+    Word_count & operator=(Word_count & other) {
+        if (this != &other) { // self-assignment check expected
+                counter = other.get_counter();
+                word = other.get_word();
+            }
+            return *this;
     }
     string get_word() {return word;}
     void set_word(string w) {word = w;}
