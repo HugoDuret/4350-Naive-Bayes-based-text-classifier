@@ -1,3 +1,8 @@
+//Project 3 - Report
+//Name : Hugo Duret
+//Student ID : 20555806
+//Due date : Nov 13, 2019
+
 #ifndef COMMON_OBJECTS_H
 #define COMMON_OBJECTS_H
 #include"string"

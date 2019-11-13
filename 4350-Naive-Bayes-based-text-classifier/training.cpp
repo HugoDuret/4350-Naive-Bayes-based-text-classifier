@@ -1,3 +1,9 @@
+//Project 3 - Report
+//Name : Hugo Duret
+//Student ID : 20555806
+//Due date : Nov 13, 2019
+
+
 #include"string"
 #include"vector"
 #include <iostream>
@@ -6,7 +12,7 @@
 #include"common.h"
 
 // C++ program to extract words from
-// a strung using stringstream
+// a string using stringstream
 #include<bits/stdc++.h>
 
 using namespace std;
