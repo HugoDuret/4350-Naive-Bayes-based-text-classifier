@@ -165,36 +165,133 @@ void training(const unsigned int training_configuration[]) {
 
     // print results
     // for each category, we print the most frequent words along with their frequency
+    printf("\nMost frequent words per category \n ");
     for(unsigned int cat = 0; cat < m; cat++) {
-        printf(" Most frequent words per category \n ");
-        printf("%s\n", category_names[cat].c_str());
+        printf("\n\ncategory = %s\n", category_names[cat].c_str());
         for(unsigned int i = 0; i < int(n/m); i++) {
             // print the current word in the current category, with its frequency
             Word_frequency current = frequencies_most_frequent_words_per_category[cat][i];
-            printf("%s: %f\n", current.get_word().c_str(), current.get_frequency());
+            printf("Word = %s; frequency = %.2f\n", current.get_word().c_str(), current.get_frequency());
         }
     }
 
-    printf(" Most frequent words among the remaining words in all categories\n ");
+    printf("\n\nMost frequent words among the remaining words in all categories\n ");
     for(unsigned int i = 0; i < n; i++) {
         // print the current word, with its frequency
         Word_frequency current = frequencies_most_frequent_words_in_all_categories[i];
-        printf("%s: %f\n", current.get_word().c_str(), current.get_frequency());
+        printf("Word = %s; frequency = %.4f\n", current.get_word().c_str(), current.get_frequency());
     }
 
 
 }
 
-// to keep it simple
-// we consider that a word is significant if
-// its length is superior to 3
-// It is relevant as many articles and prepositions
-// are short words
+
+// a word is significant if it is not a preposition nor an article
+// we also try to extract only long words
 bool is_word_significant(string word) {
-    if (word.length() > 3) {
-        return true;
+    const string english_articles [3] = {"a", "an", "the"};
+    const string english_prepositions [70] = {
+        "aboard",
+        "about",
+        "above",
+        "across",
+        "after",
+        "against",
+        "along",
+        "amid",
+        "among",
+        "anti",
+        "around",
+        "as",
+        "at",
+        "before",
+        "behind",
+        "below",
+        "beneath",
+        "beside",
+        "besides",
+        "between",
+        "beyond",
+        "but",
+        "by",
+        "concerning",
+        "considering",
+        "despite",
+        "down",
+        "during",
+        "except",
+        "excepting",
+        "excluding",
+        "following",
+        "for",
+        "from",
+        "in",
+        "inside",
+        "into",
+        "like",
+        "minus",
+        "near",
+        "of",
+        "off",
+        "on",
+        "onto",
+        "opposite",
+        "outside",
+        "over",
+        "past",
+        "per",
+        "plus",
+        "regarding",
+        "round",
+        "save",
+        "since",
+        "than",
+        "through",
+        "to",
+        "toward",
+        "towards",
+        "under",
+        "underneath",
+        "unlike",
+        "until",
+        "up",
+        "upon",
+        "versus",
+        "via",
+        "with",
+        "within",
+        "without"
+    };
+
+    const string meta_words [12] = {"Newsgroups:", "Newsgroups20", "From:", "Path:", "Subject:", "Date:", "Lines:", "Organization:", "References:", "Sender:", "Nntp-Posting-Host:", "Message-ID:"};
+
+    // check if is a meta word
+    for(unsigned int i = 0; i < meta_words->length(); i++) {
+        if (word == meta_words[i]) {
+            return false;
+        }
     }
-    else return false;
+    // check if is an article
+    for(unsigned int i = 0; i < english_articles->length(); i++) {
+        if (word == english_articles[i]) {
+            return false;
+        }
+    }
+    // check if is a preposition
+    for(unsigned int i = 0; i < english_prepositions->length(); i++) {
+        if (word == english_prepositions[i]) {
+            return false;
+        }
+    }
+
+    // we also try to extract only long words
+    // so we filter short words
+    if (word.size() < 5) {
+        return false;
+    }
+
+    return true;
+
 }
 
 // update the word if it exists inside current_list
@@ -214,8 +311,9 @@ void increment_count_word(vector<Word_count> & current_list, string word) {
 // find word with max counter in find_in
 // and such as word is not already in not_in
 Word_count max_word_in_cat(vector<Word_count> find_in, vector<Word_count> not_in) {
-    Word_count max_word = find_in[0];
-    for(unsigned int i = 1; i < find_in.size(); i++) {
+    // start with an empty word with counter equal to 0
+    Word_count max_word = Word_count();
+    for(unsigned int i = 0; i < find_in.size(); i++) {
         // if the current word is already in not_in, we continue to next word
         bool is_already_in_not_in = false;
         for(unsigned int j = 0; j < not_in.size(); j++) {
@@ -237,8 +335,9 @@ Word_count max_word_in_cat(vector<Word_count> find_in, vector<Word_count> not_in
 // find word with max counter in find_in
 // and such as word is not already in not_in_cat or not_in_all
 Word_count max_word_in_remaining(vector<Word_count> find_in, vector<vector<Word_count>>not_in_cat, vector<Word_count> not_in_all) {
-    Word_count max_word = find_in[0];
-    for(unsigned int i = 1; i < find_in.size(); i++) {
+    // start with an empty word with counter equal to 0
+    Word_count max_word = Word_count();
+    for(unsigned int i = 0; i < find_in.size(); i++) {
         // if the current word is already in not_in_all, we continue to next word
         bool is_already_in_not_in_all = false;
         for(unsigned int j = 0; j < not_in_all.size(); j++) {
