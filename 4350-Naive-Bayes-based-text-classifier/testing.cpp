@@ -13,6 +13,7 @@
 #include "common.h"
 #include <math.h>
 
+const unsigned int NB_TEXT_FILES = 100;
 
 
 // declarations of functions that are implemented at the end of the file
@@ -43,7 +44,7 @@ float testing(Training_results training_results, const vector<float> probability
     // we compute the number of text files chosen for each category
     unsigned int text_files_per_category [number_of_categories];
     for ( unsigned int cat = 0 ; cat < number_of_categories; cat++) {
-        text_files_per_category[cat] = static_cast<unsigned int>(100 * probability_distribution[cat]);
+        text_files_per_category[cat] = static_cast<unsigned int>(NB_TEXT_FILES * probability_distribution[cat]);
     }
 
     unsigned int nb_of_corrects_classification = 0;
@@ -64,7 +65,7 @@ float testing(Training_results training_results, const vector<float> probability
         }
     }
 
-    return nb_of_corrects_classification / 100;
+    return nb_of_corrects_classification / NB_TEXT_FILES;
 }
 
 vector<Word_frequency> word_frequencies_in_text(string category_name, unsigned int offset) {
@@ -137,7 +138,48 @@ vector<Word_frequency> word_frequencies_in_text(string category_name, unsigned i
     return word_frequencies;
 }
 
+// choose the category of the text based on the word frequencies in the text and in the categories
+// for each word of the text, we iterate through all categories
+// and for each word in these categories, we see if the text word is the same than the category word
+// if so (the word appears in this category), we add to a variable the product of the frequency
+// of the word in the category with the frequency of the word in the text
 string classify_text(Training_results training_results, const vector<Word_frequency> word_freq_in_text) {
+    const unsigned int number_of_categories = training_results.number_of_categories;
+    const vector <vector<Word_frequency> > frequencies_most_frequent_words_per_category = training_results.frequencies_most_frequent_words_per_category;
+
+    // keep trace of the probability of the text being in a category
+    // initialize it to 0
+    float probability_category[number_of_categories];
+    for( unsigned int nb_cat = 0; nb_cat < number_of_categories; nb_cat++) {
+        probability_category[nb_cat] = 0.0;
+    }
+    // for each word in the text
+    for( unsigned int nb_text_word = 0; nb_text_word < word_freq_in_text.size(); nb_text_word++) {
+        // for each category
+        for( unsigned int nb_cat = 0; nb_cat < number_of_categories; nb_cat++) {
+            // for each word in this category
+            for( unsigned int nb_cat_word = 0; nb_cat_word < frequencies_most_frequent_words_per_category[nb_cat].size(); nb_cat_word++) {
+                Word_frequency text_word = word_freq_in_text[nb_text_word];
+                Word_frequency cat_word = frequencies_most_frequent_words_per_category[nb_cat][nb_cat_word];
+                if ( text_word.get_word() == cat_word.get_word() ) {
+                    probability_category[nb_cat] += text_word.get_frequency() * cat_word.get_frequency();
+                }
+
+            }
+        }
+    }
+
+    // find the maximum in "probability_category"
+    // that is, the index of the category in which the text has the higher probability to be
+    unsigned int index_max = 0;
+    for( unsigned int nb_cat = 0; nb_cat < number_of_categories; nb_cat++) {
+        if (probability_category[nb_cat] > probability_category[index_max]) {
+            index_max = nb_cat;
+        }
+    }
+
+    const vector <string> category_names = training_results.category_names;
+    return category_names[index_max];
 
 }
 
