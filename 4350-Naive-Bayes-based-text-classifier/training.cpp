@@ -1,7 +1,7 @@
-//Project 3 - Report
+//Project 3 Stage 2 - Code
 //Name : Hugo Duret
 //Student ID : 20555806
-//Due date : Nov 13, 2019
+//Due date : Dec 05, 2019
 
 
 #include"string"
@@ -17,8 +17,6 @@
 
 using namespace std;
 
-
-bool is_word_significant(string word);
 void increment_count_word(vector<Word_count> & current_list, string word);
 Word_count max_word_in_cat(vector<Word_count> find_in, vector<Word_count> not_in);
 Word_count max_word_in_remaining(vector<Word_count> find_in, vector<vector<Word_count>>not_in_cat, vector<Word_count> not_in_all);
@@ -76,14 +74,14 @@ Training_results training(const unsigned int training_configuration[]) {
     struct dirent *ent2;
     unsigned int category_counter = 0;
     if ((dir = opendir ("../../mini_newsgroups")) != nullptr) {
-      /* print all the files and directories within directory mini_newsgroups */
+      /* all the files and directories within directory mini_newsgroups */
       while ( ((ent = readdir (dir)) != nullptr) and category_counter < m) {
         unsigned int text_counter = 0;
         string path_to_category = "../../mini_newsgroups/"; // to be completed just below
         path_to_category.append(ent->d_name);
         category_names.push_back(ent->d_name);
 
-        // print all the files and directories within directory mini_newsgroups\-current_category-
+        // all the files and directories within directory mini_newsgroups\-current_category-
         if ((dir2 = opendir ( path_to_category.c_str() ) ) != nullptr) {
             while ( ( (ent2 = readdir (dir2)) != nullptr ) and (text_counter < k) ) {
                 string path_to_text = path_to_category + "/";
@@ -184,129 +182,6 @@ Training_results training(const unsigned int training_configuration[]) {
 
     return results;
 
-}
-
-
-// a word is significant if it is not a preposition nor an article
-// we also try to extract only long words
-bool is_word_significant(string word) {
-    const string english_articles [3] = {"a", "an", "the"};
-    const string english_prepositions [70] = {
-        "aboard",
-        "about",
-        "above",
-        "across",
-        "after",
-        "against",
-        "along",
-        "amid",
-        "among",
-        "anti",
-        "around",
-        "as",
-        "at",
-        "before",
-        "behind",
-        "below",
-        "beneath",
-        "beside",
-        "besides",
-        "between",
-        "beyond",
-        "but",
-        "by",
-        "concerning",
-        "considering",
-        "despite",
-        "down",
-        "during",
-        "except",
-        "excepting",
-        "excluding",
-        "following",
-        "for",
-        "from",
-        "in",
-        "inside",
-        "into",
-        "like",
-        "minus",
-        "near",
-        "of",
-        "off",
-        "on",
-        "onto",
-        "opposite",
-        "outside",
-        "over",
-        "past",
-        "per",
-        "plus",
-        "regarding",
-        "round",
-        "save",
-        "since",
-        "than",
-        "through",
-        "to",
-        "toward",
-        "towards",
-        "under",
-        "underneath",
-        "unlike",
-        "until",
-        "up",
-        "upon",
-        "versus",
-        "via",
-        "with",
-        "within",
-        "without"
-    };
-
-    const string meta_words [12] = {"Newsgroups:", "Newsgroups20", "From:", "Path:", "Subject:", "Date:", "Lines:", "Organization:", "References:", "Sender:", "Nntp-Posting-Host:", "Message-ID:"};
-
-    // check if is a meta word
-    for(unsigned int i = 0; i < meta_words->length(); i++) {
-        if (word == meta_words[i]) {
-            return false;
-        }
-    }
-    // check if is an article
-    for(unsigned int i = 0; i < english_articles->length(); i++) {
-        if (word == english_articles[i]) {
-            return false;
-        }
-    }
-    // check if is a preposition
-    for(unsigned int i = 0; i < english_prepositions->length(); i++) {
-        if (word == english_prepositions[i]) {
-            return false;
-        }
-    }
-
-    // we also try to extract only long words
-    // so we filter short words
-    if (word.size() < 5) {
-        return false;
-    }
-
-    return true;
-
-}
-
-// update the word if it exists inside current_list
-// or create it inside current_list with counter set to one
-void increment_count_word(vector<Word_count> & current_list, string word) {
-    // check if exists, and update if it does
-    for(unsigned int i = 0; i < current_list.size(); i++) {
-        if (current_list[i].get_word() == word) {
-            current_list[i].operator++();
-            return;
-        }
-    }
-    // else if we didn't find it, we create one
-    current_list.push_back(Word_count(word));
 }
 
 // find word with max counter in find_in

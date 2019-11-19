@@ -1,7 +1,7 @@
-//Project 3 - Report
+//Project 3 Stage 2 - Code
 //Name : Hugo Duret
 //Student ID : 20555806
-//Due date : Nov 13, 2019
+//Due date : Dec 05, 2019
 
 #include <iostream>
 #include "training.cpp"
