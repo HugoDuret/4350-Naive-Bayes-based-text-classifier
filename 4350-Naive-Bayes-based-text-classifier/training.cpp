@@ -104,6 +104,7 @@ void training(const unsigned int training_configuration[]) {
       cout << "error2: could not open directory mini_newsgroups";
     }
 
+    // Now we count the words in each text file of each category
     // for each category
     for(unsigned int cat = 0; cat < m; cat++) {
         // for each file in each category
@@ -112,6 +113,7 @@ void training(const unsigned int training_configuration[]) {
             string line;
             ifstream file (path_to_texts_per_category[cat][j].c_str());
             if (file.is_open()) {
+              bool is_header = true;
               while ( getline (file,line) )
               {
                   // word variable to store word
@@ -120,6 +122,13 @@ void training(const unsigned int training_configuration[]) {
                   stringstream iss(line);
                   // Read the string and find next word to store in word variable.
                   while (iss >> word) {
+                    // we skip all the first lines until we reach the word "Lines:"
+                    // as it is the last line of the header in most files
+                    if (word == "Lines:") {
+                        is_header = false;
+                        continue;
+                    }
+                    if (is_header) {continue;}
                     if ( !is_word_significant(word) ) {
                         continue;
                     }
