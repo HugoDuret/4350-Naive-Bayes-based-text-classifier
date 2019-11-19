@@ -26,7 +26,7 @@ Word_count max_word_in_remaining(vector<Word_count> find_in, vector<vector<Word_
 //m (number of categories)
 //n (number of most frequent words)
 //k (number of text files under each categories)
-void training(const unsigned int training_configuration[]) {
+Training_results training(const unsigned int training_configuration[]) {
     const unsigned int m = training_configuration[0];
     const unsigned int n = training_configuration[1];
     const unsigned int k = training_configuration[2];
@@ -178,25 +178,11 @@ void training(const unsigned int training_configuration[]) {
         frequencies_most_frequent_words_in_all_categories[nb_words] = freq_word;
     }
 
-    // print results
-    // for each category, we print the most frequent words along with their frequency
-    printf("\nMost frequent words per category \n ");
-    for(unsigned int cat = 0; cat < m; cat++) {
-        printf("\n\ncategory = %s\n", category_names[cat].c_str());
-        for(unsigned int i = 0; i < int(n/m); i++) {
-            // print the current word in the current category, with its frequency
-            Word_frequency current = frequencies_most_frequent_words_per_category[cat][i];
-            printf("Word = %s; frequency = %.2f\n", current.get_word().c_str(), current.get_frequency());
-        }
-    }
+    // initialize the results data structure with the training results
+    Training_results results = { m, n, k, total_nb_words, frequencies_most_frequent_words_per_category,
+                               frequencies_most_frequent_words_in_all_categories, category_names, nb_words_in_category};
 
-    printf("\n\nMost frequent words among the remaining words in all categories\n ");
-    for(unsigned int i = 0; i < n; i++) {
-        // print the current word, with its frequency
-        Word_frequency current = frequencies_most_frequent_words_in_all_categories[i];
-        printf("Word = %s; frequency = %.4f\n", current.get_word().c_str(), current.get_frequency());
-    }
-
+    return results;
 
 }
 

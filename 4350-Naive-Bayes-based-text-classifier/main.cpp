@@ -18,18 +18,23 @@ int main()
     printf("\nWelcome in this Naïve-Bayes based text classifier!");
     printf("\nm (number of categories)");
     printf("\nn (number of most frequent words)");
-    printf("\nk (number of text files under each categories)");
+    printf("\nk (number of text files under each category)");
 
     printf("\n\nTraining with configuration one");
     printf("\n m=%d; n=%d, k=%d", Training_Configuration_1[0], Training_Configuration_1[1],Training_Configuration_1[2]);
-    training(Training_Configuration_1);
+    Training_results t1 = training(Training_Configuration_1);
+    t1.print();
 
-    printf("\n\nTraining with configuration two");
-    printf("\n m=%d; n=%d, k=%d", Training_Configuration_2[0], Training_Configuration_2[1],Training_Configuration_2[2]);
-    training(Training_Configuration_2);
+//    printf("\n\nTraining with configuration two");
+//    printf("\n m=%d; n=%d, k=%d", Training_Configuration_2[0], Training_Configuration_2[1],Training_Configuration_2[2]);
+//    Training_results t2 = training(Training_Configuration_2);
+//    t2.print();
 
-    printf("\n\nTraining with configuration three");
-    printf("\n m=%d; n=%d, k=%d", Training_Configuration_3[0], Training_Configuration_3[1],Training_Configuration_3[2]);
-    training(Training_Configuration_3);
+//    printf("\n\nTraining with configuration three");
+//    printf("\n m=%d; n=%d, k=%d", Training_Configuration_3[0], Training_Configuration_3[1],Training_Configuration_3[2]);
+//    Training_results t3 = training(Training_Configuration_3);
+//    t3.print();
+
+
     return 0;
 }
